@@ -72,7 +72,7 @@ def update_pajak_by_id(id_pajak: str, new_pajak: Pajak):
 
 # Endpoint untuk menghapus data pajak objek wisaya by id_pajak
 @app.delete("/pajak/{id_pajak}")
-def delete_pajak(id_pajak: str):
+def delete_pajak_by_id(id_pajak: str):
     index = get_pajak_index(id_pajak)
     if index is not None:
         del data_pajak[index]
