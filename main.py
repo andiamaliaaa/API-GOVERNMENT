@@ -35,7 +35,7 @@ data_pajak =[
 async def read_root():
     return {'example': 'Kamu telah berhasil masuk ke API Government', "Data":"Successful"}
 
-# Endpoint untuk menabahkan data pajak objek wisata
+# Endpoint untuk menambahkan data pajak objek wisata
 @app.post('/pajak')
 async def add_pajakwisata(pajak: Pajak):
     data_pajak.append(pajak.dict())
@@ -55,8 +55,8 @@ def get_pajak_index(id_pajak):
 # Endpoint untuk mengmabil detail data pajak sesuai dengan input id_pajak
 @app.get("/pajak/{id_pajak}", response_model=Optional[Pajak])
 def get_pajak_by_id(id_pajak: str):
-    for wisata in data_pajak:
-        if wisata['id_wisata'] == id_pajak:
+    for pajak in data_pajak:
+        if pajak['id_wisata'] == id_pajak:
             return Pajak(**pajak)
     return None
 
@@ -68,7 +68,7 @@ def update_pajak_by_id(id_pajak: str, new_pajak: Pajak):
         data_pajak[index] = new_pajak.dict()
         return {"message": "Data wisata berhasil diperbarui."}
     else:
-        raise HTTPException(status_code=404, detail="Data wPajak Objek Wisata Tidak Ditemukan.")
+        raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Ditemukan.")
 
 # Endpoint untuk menghapus data pajak objek wisaya by id_pajak
 @app.delete("/pajak/{id_pajak}")
