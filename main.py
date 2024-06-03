@@ -99,3 +99,120 @@ class ObjekWisata(BaseModel):
 async def get_objekwisata():
     data_objek = get_objek_wisata_from_web()
     return data_objek
+
+
+# untuk penduduk
+
+class Penduduk (BaseModel):
+    nik: int
+    nama: str
+    provinsi: str
+    kota: str
+    kecamatan: str
+    desa: str
+
+# Data Dummy untuk tabel penduduk
+data_penduduk =[
+    {'nik':106, 'nama':'Ammar', 'provinsi': 'Banten', 'kota': 'Tangeran Selatan', 'kecamatan': 'Serpong', 'desa': 'Rawa Buntu'},
+    {'nik':107, 'nama':'Alif', 'provinsi': 'Sumatera Barat', 'kota': 'Padang', 'kecamatan': 'Kuranji', 'desa': 'Ampang'},
+    {'nik':108, 'nama':'Malvin', 'provinsi': 'Jawa Barat', 'kota': 'Bogor', 'kecamatan': 'Bogor Selatan', 'desa': 'Cikaret'},
+    {'nik':109, 'nama':'Agung', 'provinsi': 'Jawa Timur', 'kota': 'Jember', 'kecamatan': 'Pakusari', 'desa': 'Kertosari'},
+    {'nik':110, 'nama':'Fadlan', 'provinsi': 'Banten', 'kota': 'Serang', 'kecamatan': 'Taktakan', 'desa': 'Kalang Anyar'},
+   
+    {'nik':116, 'nama':'Ali', 'provinsi': 'Banten', 'kota': 'Tangerang Selatan', 'kecamatan': 'Ciputat Timur', 'desa': 'Bintaro Sektor 3A'},
+    {'nik':117, 'nama':'Sandra', 'provinsi': 'Jawa Barat', 'kota': 'Bandung', 'kecamatan': 'Sumur Bandung', 'desa': 'Karanganyar'},
+    {'nik':118, 'nama':'Joseph', 'provinsi': 'Jawa Tengah', 'kota': 'Magelang', 'kecamatan': 'Magelang Utara', 'desa': 'Wates'},
+    {'nik':119, 'nama':'Lisa', 'provinsi': 'DI Yogyakarta', 'kota': 'Yogyakarta', 'kecamatan': 'Kota Gede', 'desa': 'Purbayan'},
+    {'nik':120, 'nama':'Bagus', 'provinsi': 'DKI Jakarta', 'kota': 'Jakarta Barat', 'kecamatan': 'Taman Sari', 'desa': 'Maphar'},
+]
+# untuk post data kita ke kelompok lain
+@app.post('/penduduk')
+async def post_penduduk(penduduk: Penduduk):
+    data_penduduk.append(penduduk.dict())
+
+# untuk menampilkan data kita sendiri
+@app.get('/penduduk', response_model=List[Penduduk])
+async def post_penduduk():
+    return data_penduduk
+
+# untuk get data sendiri (berdasakan index)
+def get_penduduk_index(nik):
+    for index, penduduk in enumerate(data_penduduk):
+        if penduduk['nik'] == nik:
+            return index
+    return None
+
+# untuk get data sendiri (berdasarkan NIK)
+@app.get("/penduduk/{id_data}", response_model=Optional[Penduduk])
+def get_penduduk_by_id(nik: int):
+    for penduduk in data_penduduk:
+        if penduduk['nik'] == nik:
+            return Penduduk(**penduduk)
+    return None
+
+# untuk update data sendiri 
+@app.put("/penduduk/{id_data}")
+def update_penduduk_by_id(nik: int, update_penduduk: Penduduk):
+    index = get_penduduk_index(nik)
+    if index is not None:
+        data_penduduk[index] = update_penduduk.dict()
+        return {"message": "Data (nama datanya) berhasil diperbarui."}
+    else:
+        raise HTTPException(status_code=404, detail="Data (nama datanya) Tidak Ditemukan.")
+    
+
+# untuk menghapus data
+@app.delete("/penduduk/{id_data}")
+def delete_penduduk_by_id(nik: int):
+    index = get_penduduk_index(nik)
+    if index is not None:
+        del data_penduduk[index]
+        return {"message": "Data (nama datanya) Berhasil Dihapus."}
+    else:
+        raise HTTPException(status_code=404, detail="Data (nama datanya) Tidak Berhasil Dihapus.")
+    
+# untuk get data dari kelompok asuransi menggunakan url web hosting
+async def get_penduduk_from_web():
+    url = "path url"  #endpoint kelompok asuransi
+    response = requests.get(url)
+    if response.status.code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil (nama datanya).")
+
+# untuk get data dari kelompok bank menggunakan url web hosting
+async def get_asuransi_from_web():
+    url = "path url"  #endpoint kelompok bank
+    response = requests.get(url)
+    if response.status.code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil (nama datanya).")
+
+# untuk get data dari kelompok bank menggunakan url web hosting (bank)
+async def get_bank_from_web():
+    url = "path url"  #endpoint kelompok bank
+    response = requests.get(url)
+    if response.status.code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil (nama datanya).")
+    
+class Asuransi(BaseModel):
+    nik: int
+    nama: str
+
+class Bank(BaseModel):
+    nik: int
+    nama: str
+
+# untuk mendapatkan hasil dari kelompok lain (asuransi)
+@app.get('/penduduk', response_model=List[Asuransi])
+async def get_asuransi():
+    data_asuransi = get_asuransi_from_web()
+    return data_asuransi
+# untuk mendapatkan hasil dari kelompok lain (bank)
+@app.get('/penduduk', response_model=List[Bank])
+async def get_bank():
+    data_bank = get_bank_from_web()
+    return data_bank
